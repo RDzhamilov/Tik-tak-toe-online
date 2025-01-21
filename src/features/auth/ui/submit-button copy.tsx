@@ -2,7 +2,7 @@ import { Either, matchEither } from "@/shared/lib/either";
 import { Alert, AlertDescription } from "@/shared/ui/alert";
 import React from "react";
 
-export function ErrorMassage({ error }: { error: Either<string, null> }) {
+export function ErrorMassage({ error }: { error: Either<string, unknown> }) {
   return matchEither(error, {
     left: (error) => (
       <Alert variant="destructive">

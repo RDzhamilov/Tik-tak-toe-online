@@ -1,4 +1,3 @@
-import { Alert, AlertDescription } from "@/shared/ui/alert";
 import {
   Card,
   CardHeader,
@@ -15,7 +14,7 @@ export function AuthFormLayout({
   fields,
   link,
   title,
-  onSubmit,
+  action,
   error,
 }: {
   title: string;
@@ -24,7 +23,7 @@ export function AuthFormLayout({
   actions: React.ReactNode;
   link: React.ReactNode;
   error: React.ReactNode;
-  onSubmit: React.FormEventHandler<HTMLFormElement>;
+  action: (FormData: FormData) => void;
 }) {
   return (
     <Card className="w-full max-w-md">
@@ -32,10 +31,10 @@ export function AuthFormLayout({
         <CardTitle className="text-2xl font-bold text-center">
           {title}
         </CardTitle>
-        <CardDescription className="text-center">{description}</CardDescription
+        <CardDescription className="text-center">{description}</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={onSubmit} className="space-y-4">
+        <form action={action} className="space-y-4">
           {fields}
 
           {error}
