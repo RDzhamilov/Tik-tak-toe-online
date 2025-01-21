@@ -1,24 +1,42 @@
 "use server";
 
 import { createUser, sessionService } from "@/entities/user/server";
-import { left, mapLeft } from "@/shared/lib/either";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+
+export type SignUpFormState = {
+  formData?: FormData;
+  errors?: {
+    login?: string;
+    password?: string;
+    _errors?: string;
+  };
+};
 
 const formDataSchema = z.object({
   login: z.string().min(3),
   password: z.string().min(3),
 });
 
-export const signUpAction = async (state: unknown, formData: FormData) => {
+export const signUpAction = async (
+  state: SignUpFormState,
+  formData: FormData,
+): Promise<SignUpFormState> => {
   const data = Object.fromEntries(formData.entries());
 
   const result = formDataSchema.safeParse(data);
 
   if (!result.success) {
-    return left(`Ошибки валидации: ${result.error.message}`);
+    const formatedErrors = result.error.format();
+    return {
+      formData,
+      errors: {
+        login: formatedErrors.login?._errors.join(", "),
+        password: formatedErrors.password?._errors.join(", "),
+        _errors: formatedErrors._errors?.join(", "),
+      },
+    };
   }
-
   const createUserResult = await createUser(result.data);
 
   if (createUserResult.type === "right") {
@@ -27,9 +45,14 @@ export const signUpAction = async (state: unknown, formData: FormData) => {
     redirect("/");
   }
 
-  return mapLeft(createUserResult, (error) => {
-    return {
-      "user-login-exists": "Пользователь с таким login уже существует",
-    }[error];
-  });
+  const errors = {
+    "user-login-exists": "Пользователь с таким login уже существует",
+  }[createUserResult.error];
+
+  return {
+    formData,
+    errors: {
+      _errors: errors,
+    },
+  };
 };
