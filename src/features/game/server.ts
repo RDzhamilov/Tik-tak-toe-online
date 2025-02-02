@@ -1,2 +1,2 @@
 export { Game } from "./containers/game";
-export { getGameStreams } from "./containers/get-game-streams";
+export { getGameStreams } from "./routes/get-game-streams";
