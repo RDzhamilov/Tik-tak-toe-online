@@ -7,6 +7,7 @@ import { SubmitButton } from "../ui/submit-button";
 import { ErrorMassage } from "../ui/submit-button copy";
 import { useActionState } from "@/shared/lib/react";
 import { signUpAction, SignUpFormState } from "../actions/sign-up";
+import { routes } from "@/kernel/routes";
 
 export function SignUpForm() {
   const [formState, action, isPending] = useActionState(
@@ -26,7 +27,7 @@ export function SignUpForm() {
         <ButtonLink
           text="Already have an account?"
           linkText="Sign In"
-          url="/sign-in"
+          url={routes.signIn()}
         />
       }
     />

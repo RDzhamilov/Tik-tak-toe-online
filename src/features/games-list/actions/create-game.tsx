@@ -2,6 +2,7 @@
 
 import { createGames } from "@/entities/game/server";
 import { getCurrentUser } from "@/entities/user/server";
+import { routes } from "@/kernel/routes";
 import { left } from "@/shared/lib/either";
 import { redirect } from "next/navigation";
 
@@ -14,7 +15,7 @@ export const createGameAction = async () => {
   const gameResult = await createGames(user);
 
   if (gameResult.type === "right") {
-    redirect(`/game/${gameResult.value.id}`);
+    redirect(routes.game(gameResult.value.id));
   }
 
   return gameResult;
