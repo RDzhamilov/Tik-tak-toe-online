@@ -17,12 +17,7 @@ export class EventsChanel {
     return channel;
   }
 
-  async emit(key: string, data: Record<string, unknown> | null) {
-    if (!data) {
-      console.error("Ошибка: data === null при вызове emit");
-      return;
-    }
-
+  async emit(key: string, data: Record<string, unknown>) {
     const channel = await this.createChannel();
 
     channel.publish(

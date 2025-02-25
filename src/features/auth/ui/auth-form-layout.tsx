@@ -36,7 +36,6 @@ export function AuthFormLayout({
       <CardContent>
         <form action={action} className="space-y-4">
           {fields}
-
           {error}
           {actions}
         </form>

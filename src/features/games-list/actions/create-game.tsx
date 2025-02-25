@@ -1,6 +1,6 @@
 "use server";
 
-import { createGames } from "@/entities/game/server";
+import { createGame } from "@/entities/game/server";
 import { getCurrentUser } from "@/entities/user/server";
 import { routes } from "@/kernel/routes";
 import { left } from "@/shared/lib/either";
@@ -12,7 +12,7 @@ export const createGameAction = async () => {
   if (!user) {
     return left("user-not-found" as const);
   }
-  const gameResult = await createGames(user);
+  const gameResult = await createGame(user);
 
   if (gameResult.type === "right") {
     redirect(routes.game(gameResult.value.id));

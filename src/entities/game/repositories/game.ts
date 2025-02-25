@@ -16,11 +16,13 @@ const gameInclude = {
   players: { include: { user: true } },
 };
 
-async function gameList(where?: Prisma.GameWhereInput): Promise<GameEntity[]> {
+async function gamesList(where?: Prisma.GameWhereInput): Promise<GameEntity[]> {
   const games = await prisma.game.findMany({
     where,
     include: gameInclude,
   });
+
+  games.map((game) => game.players.map((p) => p.user));
 
   return games.map(dbGameToGameEntity);
 }
@@ -73,15 +75,15 @@ async function getGame(where?: Prisma.GameWhereInput) {
     where,
     include: gameInclude,
   });
+
   if (game) {
     return dbGameToGameEntity(game);
   }
-
   return undefined;
 }
 
 async function createGame(game: GameIdleEntity): Promise<GameEntity> {
-  const createGame = await prisma.game.create({
+  const createdGame = await prisma.game.create({
     data: {
       status: game.status,
       id: game.id,
@@ -96,7 +98,7 @@ async function createGame(game: GameIdleEntity): Promise<GameEntity> {
     include: gameInclude,
   });
 
-  return dbGameToGameEntity(createGame);
+  return dbGameToGameEntity(createdGame);
 }
 
 const fieldSchema = z.array(z.union([z.string(), z.null()]));
@@ -107,15 +109,18 @@ function dbGameToGameEntity(
     winner?: (GamePlayer & { user: User }) | null;
   },
 ): GameEntity {
+  console.log({ game }, 2);
   const players = game.players
     .sort((a, b) => a.index - b.index)
     .map(dbPlayerToPlayer);
+
+  console.log({ game }, 3);
 
   switch (game.status) {
     case "idle": {
       const [creator] = players;
       if (!creator) {
-        throw new Error("Creator should be in idle");
+        throw new Error("creator shoud be in game idle");
       }
       return {
         id: game.id,
@@ -133,10 +138,9 @@ function dbGameToGameEntity(
         field: fieldSchema.parse(game.field),
       };
     }
-
     case "gameOver": {
       if (!game.winner) {
-        throw new Error("Game over but no winner");
+        throw new Error("winner shoud be in game over");
       }
       return {
         id: game.id,
@@ -160,7 +164,7 @@ export const dbPlayerToPlayer = (
 };
 
 export const gameRepository = {
-  gameList,
+  gamesList,
   createGame,
   getGame,
   startGame,

@@ -5,9 +5,8 @@ export const sseStream = (req: NextRequest) => {
   const writer = responseStream.writable.getWriter();
   const encoder = new TextEncoder();
 
-  const write = (data: unknown) => {
+  const write = (data: unknown) =>
     writer.write(encoder.encode(`data: ${JSON.stringify(data)}\n\n`));
-  };
 
   const addCloseListener = (onDisconnect: () => void) =>
     void req.signal.addEventListener("abort", () => {
