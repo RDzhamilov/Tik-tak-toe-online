@@ -1,3 +1,3 @@
-import { getGameStream } from "@/features/game/server";
+import { getGamesStreamRoute } from "@/features/games-list/server";
 
-export const GET = getGameStream;
+export const GET = getGamesStreamRoute;
